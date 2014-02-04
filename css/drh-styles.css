@@ -1,0 +1,43 @@
+/*
+* Style-sheet for the plugin
+*/
+@import url('//fonts.googleapis.com/css?family=Oswald:300');
+
+#mkgd-wrap{font-family: 'Oswald';padding-top:10px;border:0px solid gray;-moz-border-radius:0px;-webkit-border-radius:0px;border-radius:0px;border-radius:0px;}
+#mkgd-wrap .mkgd-form label {display:block;float:left;font-weight:bold;-moz-border-radius:0px;-webkit-border-radius:0px;border-radius:0px;border-radius:0px;}
+#mkgd-wrap #mkgd-map-canvas, #mkgd-wrap #map_canvas {margin-left:5px;margin-bottom:10px;}
+#mkgd-wrap .mkgd-form{}
+#mkgd-wrap .mkgd-form li{list-style: none;margin-bottom: 10px!important;font-weight: bold;}
+#mkgd-wrap .mkgd-form label{display:block;float:left;font-weight:bold;}
+#mkgd-wrap #directions h4{margin: 0px 0px 10px 10px;/*padding-left:1em;padding-right:1em;*/}
+#mkgd-wrap #directions h3{/*text-align:center;*/margin: 0px 0px 10px 10px;}
+#mkgd-wrap #directions p{/*text-align:center;*/margin: 0px 0px 10px 10px;}
+#mkgd-wrap #directions li{list-style: inside;margin: 0px; padding: 5px}
+#mkgd-wrap #directions li:nth-child(odd) {background: #EEE;color: #444;}
+#mkgd-wrap #directions li:nth-child(even) {color: #444;}
+#mkgd-wrap #directions li div{padding-left: 15px;}
+#directions{padding:10px;}
+#next_step{padding:10px;}
+.mkgd-error{background-color: #F2C6C6;color: #FF0000;padding: 5px;border: solid 1px #FF0000;}
+input#btnPlaceOrder{margin-left:0em;}
+input#btnAdd{margin-left:0em;}
+input#btnPayNow{margin:1em;}
+input#btnStartOver{margin:1em;}
+#back_to_top{text-decoration:underline;text-align:center;}
+#client_login{text-decoration: underline;}
+#hide_login{text-decoration: underline;}
+#yourinfo{display:none;}
+#are_you_in{display:none;}
+#phone_number{display:none;}
+.mkgd-form{list-style:none;}
+input#datepicker{padding:3px;border:0;background:none;}
+#database_test{text-align:center;}
+#drh-cab-title{text-align:center;}
+.drh-chk_status{text-decoration:underline;padding-right:10px;font-weight:bold;float:right;}
+.drh-chk_status:hover{background:white;font-weight:bold;padding-right:10px;float:right;}
+#drh-hr{display:block;padding:0;height:4px;border:0;border-top:4px solid white;}
+#drh-choices{width:100%;text-align:right;padding-bottom:10px;}
+#check_status_now{text-align:left;}
+.ui-button-text{font-family:oswald;border:0px solid gray;-moz-border-radius:0px;-webkit-border-radius:0px;border-radius:0px;border-radius:0px;}
+.highlight{background:orange;}
+#appt_details{text-align:center;font-weight:bold;}
