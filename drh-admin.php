@@ -239,7 +239,7 @@ function drh_admin_page() {
         <tbody>
           <tr>
             <td>
-              <h2>If you like and use this script, please consider buying me a beer, it’s cheap and a simple way to give back!</h2>
+              <h2>If you like and use this script, please consider buying me a beer -- a cheap and a simple way to give back! Thanks!</h2>
               <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RVZAWU7BDLRJ2" title="Donate" target="_blank"><img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif" alt="Donate" title="Donate" /></a>			
 			</td>
           </tr>
