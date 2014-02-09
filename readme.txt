@@ -32,7 +32,7 @@ Email : davidrhenley@gmail.com
 
 4. Click on the "Order A Taxi" menu to go to the settings page.
 
-5. Use [[Order_Taxi]] shortcode in your post/page.
+5. Use [Order_Taxi] shortcode in your post/page.
 
 
 == Frequently Asked Questions ==
