@@ -77,7 +77,6 @@ jQuery(window).load(function(){
 	var hourDesired = document.getElementById('hourdropdown').value;
 	var mornOrnoon = document.getElementById('amorpm').value;
 	var theminutes = document.getElementById('mindropdown').value;
-	//var passengers = document.getElementById('vehicletype').value;
 	var hours = currentTime.getHours();
 	var minutes = currentTime.getMinutes();
 	var isIttoday = currentTime.getDate();
@@ -105,6 +104,8 @@ jQuery(window).load(function(){
 jQuery(document).ready(function(){
 	jQuery("#mkgd-map-canvas").hide();
 	jQuery("#check_status_now").hide();
+	jQuery("#btnCancel").hide();
+	jQuery("input#btnStartOver2").hide();
 	jQuery("#datepicker").datepicker({
 		minDate:0,
 		setDate:+0,
@@ -174,53 +175,64 @@ http://stackoverflow.com/questions/18608954/how-to-prevent-user-from-entering-sp
 		}
 	}); 
 	
-	jQuery("#btnNow").click(function(){	
-		jQuery("#blk-btnLater").hide();
-	});
-	jQuery("#btnLater").click(function(){ 
-		jQuery("#blk-btnLater").show();		
-	});	
-	
-	jQuery("#drh-check_status").click(function(){
-		jQuery("#check_status_now").slideDown();
-		return false;
-	});
-	jQuery("#drh-hide_status").click(function(){
-		jQuery("#check_status_now").slideUp();		
-		return false;
-	});
-	// check on the status of a previous appointment
-	jQuery("#btnCheckStatus").click(function(){
-	
+//===================================================================================================
+	// cancel an appointment 
+//===================================================================================================	
+	jQuery("#btnCancel").click(function(){
 		var phone_status	=	document.getElementById('phone_status').value;
 		var conf_num		=	document.getElementById('conf_num').value;
+		whatshouldido		=	'canceltheappt';
+		var data			=	{ 	whatshouldido		:	whatshouldido,
+									the_phone_status 	:	phone_status,
+									the_conf_num		:	conf_num	};
+		var cancelAppt		=	"<?php echo plugins_url('/drh-email-order.php', __FILE__ ); ?>";
+		jQuery.ajax({
+					type	:	"POST",
+					url		:	cancelAppt,
+					data	:	data,
+					dataType:	'json',
+					success	:	function(response,	status)	{
+						if (response.success === true) {
+							jQuery('#appt_details').html('')
+							.html("Current Status: "+response.status)					
+							.show();
+						} else {
+							jQuery('#appt_details').html('')
+							.html("Sorry, but the appointment you entered was not found.")
+							.show();					
+						}
+						jQuery("#btnCancel").hide();
+					}
+		});		
+		jQuery("input#btnStartOver2").show();		
+		return false;
+	});	// end cancel appointment
+	
+//===================================================================================================	
+	// check on the status of a previous appointment
+//===================================================================================================	
+	jQuery("#btnCheckStatus").click(function(){
+		var phone_status	=	document.getElementById('phone_status').value;
+		var conf_num		=	document.getElementById('conf_num').value;
+		var viewAppt		=	"<?php echo plugins_url('/drh-email-order.php', __FILE__ ); ?>";
 		whatshouldido		=	'lemmesee';
-		
-		if	(phone_status	== ""){ 
+		var data			=	{ 	whatshouldido		:	whatshouldido,
+									the_phone_status 	:	phone_status,
+									the_conf_num		:	conf_num	};		
+		if(phone_status	== ""){ 
 			alert("Please enter your phone number."); 
-			jQuery('html, body').animate({
-				scrollTop: jQuery("#mkgd-wrap").offset().top
-			}, 2000);	
+			jQuery('html, body').animate({scrollTop: jQuery("#mkgd-wrap").offset().top}, 1000);	
 			jQuery("input#phone_status").focus();
 			return false;			
 		}  			
 		if(conf_num == ""){ 
 			alert("Please enter your confirmation number."); 
-			jQuery('html, body').animate({
-				scrollTop: jQuery("#mkgd-wrap").offset().top
-			}, 2000);	
+			jQuery('html, body').animate({scrollTop: jQuery("#mkgd-wrap").offset().top}, 1000);	
 			jQuery("input#conf_num").focus();
 			return false;			
 		}  	
-
-		var data = { 	whatshouldido		:	whatshouldido,
-						the_phone_status 	:	phone_status,
-						the_conf_num		:	conf_num
-					};
-			
-		var viewAppt = "<?php echo plugins_url('/drh-email-order.php', __FILE__ ); ?>";
-			
-
+		jQuery("#btnCheckStatus").hide();
+		jQuery("#btnCancel").hide();
 		jQuery.ajax({
 			type	:	"POST",
 			url		:	viewAppt,
@@ -231,101 +243,76 @@ http://stackoverflow.com/questions/18608954/how-to-prevent-user-from-entering-sp
 					jQuery('#appt_details').html('')
 					.html("Current Status: "+response.status+"<br>Name: "+response.first_name+"Phone: "+response.phone+"Email: "+response.email+"Origin: "+response.start_location+"Destination: "+response.end_location+"Departure Date: "+response.departure_date+"Departure Time: "+response.departure_time)
 					.show();
+					if (response.status === "Booked") { jQuery("#btnCancel").show();	}
 				} else {
 					jQuery('#appt_details').html('')
 					.html("Sorry, but the appointment you entered was not found.")
-					.show();					
+					.show();	
+					jQuery("#btnCheckStatus").show();					
+					
 				}									
 			}
 		});			
-		
 		return false;
-	});	
+	});	// end check status
 
-	jQuery("div#back_to_top").click(function(){
-		window.scrollTo(0,0);
-	});		
-
+//===================================================================================================	
+	// preview an appointment
+//===================================================================================================	
 	jQuery("#btnPreviewOrder").click(function() { 
-
-		currentTime = new Date();
-		start = document.getElementById('origin').value;
-		end = document.getElementById('destination').value;
-		phone = document.getElementById('phone').value;
-		email = document.getElementById('email').value;
-		first_name = document.getElementById('first_name').value;
-		hourDesired = document.getElementById('hourdropdown').value;
-		mornOrnoon = document.getElementById('amorpm').value;
-		theminutes = document.getElementById('mindropdown').value;
-		//passengers = document.getElementById('vehicletype').value;
-		hours = currentTime.getHours();
-		minutes = currentTime.getMinutes();
-		isIttoday = currentTime.getDate();
-		themonth = (currentTime.getMonth() + 1);
-		date = jQuery("#datepicker").datepicker('getDate');
-		day  = date.getDate();
-		month = date.getMonth() + 1;
-		year =  date.getFullYear();		
-	
+		currentTime			=	new Date();
+		start				=	document.getElementById('origin').value;
+		end					=	document.getElementById('destination').value;
+		phone				=	document.getElementById('phone').value;
+		email				=	document.getElementById('email').value;
+		first_name			=	document.getElementById('first_name').value;
+		hourDesired			=	document.getElementById('hourdropdown').value;
+		mornOrnoon			=	document.getElementById('amorpm').value;
+		theminutes			=	document.getElementById('mindropdown').value;
+		hours				=	currentTime.getHours();
+		minutes				=	currentTime.getMinutes();
+		isIttoday			=	currentTime.getDate();
+		themonth			=	(currentTime.getMonth() + 1);
+		date				=	jQuery("#datepicker").datepicker('getDate');
+		day					=	date.getDate();
+		month				=	date.getMonth() + 1;
+		year				=	date.getFullYear();		
+		var reg				=	/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 		if(first_name == ""){ 
-			jQuery("input#first_name").addClass("highlight").focus();				
+			jQuery("input#first_name").focus();				
 			alert("Please enter your name."); 
-			jQuery('html, body').animate({
-				scrollTop: jQuery("#mkgd-wrap").offset().top
-			}, 1000);	
+			jQuery('html, body').animate({scrollTop: jQuery("#mkgd-wrap").offset().top}, 1000);	
 			return false;			
-		} else { jQuery("input#first_name").removeClass("highlight"); }	
-		
+		} 		
 		if(phone == ""){ 
-			jQuery("input#phone").addClass("highlight").focus();
-			alert("Please enter your phone number."); 
-			jQuery('html, body').animate({
-				scrollTop: jQuery("#mkgd-wrap").offset().top
-			}, 1000);			
 			jQuery("input#phone").focus();
+			alert("Please enter your phone number."); 
+			jQuery('html, body').animate({scrollTop: jQuery("#mkgd-wrap").offset().top}, 1000);	
 			return false;
-		} else {jQuery("input#phone").removeClass("highlight"); }
-
-		var reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
-		if (reg.test(email))
-		{ 
-			jQuery("input#email").removeClass("highlight"); 
 		}
-		else 
-		{ 
+		if (!reg.test(email)){
+			jQuery("input#email").focus();		
 			alert("Please enter your email address."); 
-			jQuery("input#email").removeClass("highlight");
-			jQuery('html, body').animate({
-				scrollTop: jQuery("#mkgd-wrap").offset().top
-			}, 1000);			
-			jQuery("input#email").focus();				
+			jQuery('html, body').animate({scrollTop: jQuery("#mkgd-wrap").offset().top}, 1000);	
 			return false; 
-		}	
-		
-		if(start == "")
-		{	jQuery("input#origin").addClass("highlight").focus();	 
+		}		
+		if(start == ""){
+			jQuery("input#origin").focus();	 
 			alert("Please enter your origin.");
-			jQuery('html, body').animate({
-				scrollTop: jQuery("#mkgd-wrap").offset().top
-			}, 1000);			
+			jQuery('html, body').animate({scrollTop: jQuery("#mkgd-wrap").offset().top}, 1000);	
 			return false;
-		} else { jQuery("input#origin").removeClass("highlight"); }	
-
-		if(end == "")
-		{	jQuery("input#destination").addClass("highlight").focus();	 
+		}
+		if(end == ""){
+			jQuery("input#destination").focus();	 
 			alert("Please enter your destination.");
-			jQuery('html, body').animate({
-				scrollTop: jQuery("#mkgd-wrap").offset().top
-			}, 1000);			
+			jQuery('html, body').animate({scrollTop: jQuery("#mkgd-wrap").offset().top}, 1000);	
 			return false;
-		} else 	{ jQuery("input#destination").removeClass("highlight"); }
-		
+		}
 		// check to see if get a cab now is selected
 		if ((!jQuery('#btnLater').is(':checked'))&&(!jQuery('#btnNow').is(':checked'))){
 			alert("Please select Get a Cab Now or Get a Cab Later");
 			return false;
 		}
-		
 		if (jQuery('#btnLater').is(':checked')){
 			// compare today with the date selected in the datepicker
 			if (month == themonth)
@@ -372,7 +359,7 @@ http://stackoverflow.com/questions/18608954/how-to-prevent-user-from-entering-sp
 				}
 			}
 		} // end If (jQuery('#btnLater').is(':checked')){
-
+		jQuery("#btnPreviewOrder").hide();
 		jQuery.post('<?php echo plugins_url('/drh-ajax-handler.php', __FILE__); ?>', 
 			{origin		:	start, 
 			destination	:	end, 
@@ -398,8 +385,11 @@ http://stackoverflow.com/questions/18608954/how-to-prevent-user-from-entering-sp
 			}
 		);		
 		return false;
-	});	
+	});		// end preview an appointment
 
+//===================================================================================================	
+	// pay for a cab now
+//===================================================================================================	
 	jQuery("input#btnPayNow").click(function() {        
 		date = jQuery("#datepicker").datepicker('getDate');
 		day  = date.getDate();
@@ -459,10 +449,17 @@ http://stackoverflow.com/questions/18608954/how-to-prevent-user-from-entering-sp
 		});				
 		jQuery("input#btnPayNow").hide();		
 		return false;
-	});		
+	});	// end pay now
+
+//===================================================================================================	
+	// start over -- reset inputs
+//===================================================================================================		
 	jQuery("input#btnStartOver").click(function() {  
-		jQuery('#mkgd-wrap').find('input:text').val('');	
+		jQuery("input#first_name").val('').focus();
+		jQuery('input#phone').val('').mask("(999) 999-9999");
 		jQuery('input#email').val('');
+		jQuery("input#origin").val('');
+		jQuery("input#destination").val('');
 		var todaysDate = new Date();
 		var thisMonth = (todaysDate.getMonth() + 1);
 		if (thisMonth<10){ thisMonth = "0"+thisMonth; }
@@ -470,23 +467,48 @@ http://stackoverflow.com/questions/18608954/how-to-prevent-user-from-entering-sp
 		//format the date in the right format (add 1 to month because JavaScript counts from 0)
 		formatDate = thisMonth + '/' + todaysDate.getDate() + '/' + todaysDate.getFullYear();
 		jQuery('#datepicker').val(formatDate);	
-		jQuery('input#phone').mask("(999) 999-9999");	
 		jQuery('#comments').hide();
 		jQuery('.search-toggle').hide();
 		jQuery('#next_step').hide();
 		jQuery("#blk-btnLater").hide();
 		jQuery("#next_step").slideUp(10,function() {
 			jQuery("#directions").html('').slideUp(1000,function(){
-				jQuery('html, body').animate({
-					scrollTop: jQuery("#mkgd-wrap").offset().top
-				}, 2000);			
+				jQuery('html, body').animate({scrollTop: jQuery("#mkgd-wrap").offset().top}, 1000);			
 			});
 		});
-		
 		jQuery("#btnPreviewOrder").show();
-		jQuery("input#first_name").focus();
 		return false;
-	});			
+	});	
+	jQuery("input#btnStartOver2").click(function() {  
+		jQuery("input#conf_num").val('');
+		jQuery('input#phone_status').val('').mask("(999) 999-9999").focus();
+		jQuery("#database_test").html('').hide();
+		//format the date in the right format (add 1 to month because JavaScript counts from 0)
+		jQuery('#comments').hide();
+		jQuery('.search-toggle').hide();
+		jQuery('#next_step').hide();
+		jQuery("#blk-btnLater").hide();
+		jQuery("#next_step").slideUp(10,function() {
+			jQuery("#directions").html('').slideUp(1000,function(){
+				jQuery('html, body').animate({scrollTop: jQuery("#mkgd-wrap").offset().top}, 1000);			
+			});
+		});
+		jQuery("#btnCheckStatus").show();
+		return false;
+	});	
+	
+	jQuery("#btnNow").click(function(){	jQuery("#blk-btnLater").hide();	});
+	jQuery("#btnLater").click(function(){ jQuery("#blk-btnLater").show(); });	
+	
+	jQuery("#drh-check_status").click(function(){
+		jQuery("#check_status_now").slideDown();
+		return false;
+	});
+	jQuery("#drh-hide_status").click(function(){
+		jQuery("#check_status_now").slideUp();		
+		return false;
+	});	
+	jQuery("div#back_to_top").click(function(){	window.scrollTo(0,0);	});		
 	
     function initialize() {
       directionsDisplay = new google.maps.DirectionsRenderer();
@@ -526,26 +548,32 @@ function mkgd_initialize() {
 			</div>
 			<br>
 			<div id="check_status_now">
-			<span id="drh-hide_status" class="drh-chk_status">Hide Status</span>
-			<br>
-			<br>
-			<form id="drhForm2">	
-				<ul class="mkgd-form">
-				<li>
+				<span id="drh-hide_status" class="drh-chk_status">Hide Status</span>
+				<br><br>
+				<form id="drhForm2">	
+					<ul class="mkgd-form">
+					<li>
 					<label for="phone_status">'. __("Phone number") .'</label><br>
-					<input id="phone_status" name="phone_status" type="text" size="15"  />					  		
-				</li>					
-				<li>
+					<input id="phone_status" name="phone_status" type="text" size="15"/>					  		
+					</li>					
+					<li>
 					<label for="conf_num">'. __("Confirmation Number") .'</label><br>
 					<input id="conf_num" name="conf_num" type="number" size="15" class="numbersonly" /><br>			
-				</li>
-				<li>
-				<input type="button" name="btnCheckStatus" id="btnCheckStatus" value="'. __("Check Status").'"/>
-				</li>									
-				</ul>
-				<div id="appt_details">
-				</div>
-			</form>		
+					</li>
+					<li>
+					<input type="button" name="btnCheckStatus" id="btnCheckStatus" value="'. __("Check Status").'"/>
+					</li>									
+					<li>
+					<div id="appt_details"></div>
+					</li>
+					<li>
+					<input type="button" name="btnCancel" id="btnCancel" value="'. __("Cancel Appointment").'"/>					
+					</li>
+					<li>
+					<input type="button" name="btnStartOver2" id="btnStartOver2" value="'. __("Start Over").'"/>
+					</li>
+					</ul>
+				</form>
 			</div>			
 		</div>
 		<div id="drh-hr"></div>
