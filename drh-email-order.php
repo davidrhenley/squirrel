@@ -61,7 +61,7 @@ class drh_appointment {
 		include( 'wp-config.php' );
 		global $wpdb; // this is how you get access to the database
 		$table					=	"drh_appointments";					
-		
+
 		$sql					=	"SELECT first_name,phone,email,start_location,end_location,departure_time,departure_date,status from $table where id=$the_conf_num and phone='$the_phone_status'";
 		$sql					=	strip_tags ( htmlentities ( trim ( $sql ) , ENT_NOQUOTES ) );
 
@@ -77,7 +77,7 @@ class drh_appointment {
 			$response['end_location'] = $row->end_location."<br>";
 			$response['departure_date'] = $row->departure_date."<br>";
 			$response['departure_time'] = $row->departure_time."<br>";
-			$response['status'] = $row->status."<br>";
+			$response['status'] = $row->status;
 		} 
 		else
 		{
@@ -86,7 +86,7 @@ class drh_appointment {
 		echo json_encode($response);	
 		die();
 	}
-	
+
 	function save_appointment() {
 		// get the posted data
 		$response			=	array('success' => false, 'last_id' => 1);
@@ -97,7 +97,7 @@ class drh_appointment {
 		$email				=	$_POST['youremail'];
 		$departureTime		=	$_POST['departureTime'];
 		$departureDate		=	$_POST['departureDate'];
-		
+
 		switch( true ){
 			case ( 	!empty($your_first_name) 
 				&& 	!empty($startLocation) 
@@ -122,14 +122,14 @@ class drh_appointment {
 
 		include( 'wp-config.php' );
 		global $wpdb; // this is how you get access to the database
-			
+
 		$table		=	"drh_appointments";
-	
+
 		$sql		=	"INSERT INTO $table ".
 		 "(first_name,phone,email,start_location,end_location,departure_time,departure_date,status) ".
 		 "VALUES ".
 		 "('$your_first_name','$phoneNumber','$email','$startLocation','$endLocation','$departureTime',
-		 '$departureDate','booked')";
+		 '$departureDate','Booked')";
 		$sql		=	strip_tags ( htmlentities ( trim ( $sql ) , ENT_NOQUOTES ) );
 		$result		=	$wpdb->query($sql);
 		$response['success'] = true;
